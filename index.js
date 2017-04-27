@@ -6,12 +6,12 @@ Object.defineProperty(exports, "__esModule", {
 exports.red = red;
 exports.green = green;
 exports.blue = blue;
+exports.rgbToBrightness = rgbToBrightness;
 exports.rgbToHex = rgbToHex;
 exports.rgbToUint = rgbToUint;
 exports.uintToHex = uintToHex;
 exports.uintToRGB = uintToRGB;
 exports.uintToRGBA = uintToRGBA;
-exports.rgbToBrightness = rgbToBrightness;
 var WHITE = 255 + 255 + 255;
 
 function red(uint) {
@@ -24,6 +24,13 @@ function green(uint) {
 
 function blue(uint) {
   return uint & 0xFF;
+}
+
+function rgbToBrightness(r, g, b) {
+  var decimal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+  var total = r + g + b;
+  return decimal ? total / WHITE : total;
 }
 
 var RGB_REGEX = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/g;
@@ -56,11 +63,4 @@ function uintToRGBA(uint) {
   var alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
   return 'rgba(' + red(uint) + ',' + green(uint) + ',' + blue(uint) + ',' + alpha + ')';
-}
-
-function rgbToBrightness(r, g, b) {
-  var decimal = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-
-  var total = r + g + b;
-  return decimal ? total / WHITE : total;
 }

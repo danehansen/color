@@ -1,4 +1,4 @@
 import * as color from './index'
-import { putContentsOnWindow } from '@danehansen/package-helpers'
+import * as packageHelpers from '@danehansen/package-helpers'
 
-putClassOnWindow(color, 'color')
+packageHelpers.putClassOnWindow(color, 'color')
