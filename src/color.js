@@ -17,8 +17,8 @@ export function rgbToBrightness(r, g, b, decimal = true) {
   return decimal ? (total / WHITE) : total
 }
 
-const RGB_REGEX = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\s*\)/g
-export function rgbToHex(rgb) {
+const RGB_REGEX = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*\d*\.?\d*\s*\)/i
+export function stringToHex(rgb) {
   const exec = RGB_REGEX.exec(rgb)
   if (!exec) {
     return null
@@ -38,10 +38,10 @@ export function uintToHex(uint) {
   return `#${str}`
 }
 
-export function uintToRGB(uint) {
+export function uintToRGBString(uint) {
   return `rgb(${red(uint)},${green(uint)},${blue(uint)})`
 }
 
-export function uintToRGBA(uint, alpha = 1) {
+export function uintToRGBAString(uint, alpha = 1) {
   return `rgba(${red(uint)},${green(uint)},${blue(uint)},${alpha})`
 }

@@ -32,13 +32,13 @@ In your browser:
 [static] Returns the blue portion of a uint.
 * __rgbToBrightness__(r:uint, g:uint, b:uint, decimal:boolean = true):Number  
 [static] Returns the overall brightness of an RGB color as a single value, optionally as a decimal between 0 and 1 or as a uint between 0 and 765.
-* __rgbToHex__(rgb:String):String  
+* __stringToHex__(rgb:String):String  
 [static] Converts a 'rgb(X,X,X)' string into a '#XXXXXX' string.
 * __rgbToUint__(r:uint, g:uint, b:uint):uint  
 [static] Converts 3 uints into a single uint.
 * __uintToHex__(color:uint):String  
 [static] Converts a uint into a '#XXXXXX' string.
-* __uintToRGB__(color:uint):String  
+* __uintToRGBString__(color:uint):String  
 [static] Converts a uint into a 'rgb(X,X,X)' string.
-* __uintToRGBA__(color:uint, alpha:Number = 1):String  
+* __uintToRGBAString__(color:uint, alpha:Number = 1):String  
 [static] Converts a uint and alpha into a 'rgba(X,X,X,X)' string.
