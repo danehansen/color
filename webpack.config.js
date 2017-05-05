@@ -1,10 +1,6 @@
-const path = require('path')
-const webpack = require('webpack')
-
 module.exports = {
-  context: path.resolve(__dirname, './src'),
   entry: {
-    app: './color.js',
+    app: './src/color.js',
   },
   module: {
     rules: [
@@ -13,13 +9,13 @@ module.exports = {
         test: /\.js$/,
         use: [{
           loader: 'babel-loader',
-          options: { presets: ['es2015', 'stage-0'] },
         }],
       },
     ],
   },
   output: {
-    filename: 'index.js',
-    path: path.resolve(__dirname, './'),
+    filename: 'danehansen-color.min.js',
+    library: ['danehansen', 'color'],
+    libraryTarget: 'umd',
   },
-};
+}

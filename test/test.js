@@ -116,7 +116,7 @@ describe('color', function() {
     })
   })
 
-  describe('red, gree, blue', function() {
+  describe('red, green, blue', function() {
     it('they get the appropriate color value from a uint as a uint', function() {
       for(let i = 0; i < REPEAT; i++) {
         const r = rand255()

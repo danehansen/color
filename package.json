@@ -1,16 +1,16 @@
 {
   "name": "@danehansen/color",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "color",
-  "main": "index.js",
+  "main": "danehansen-color.min.js",
   "scripts": {
-    "watch": "karma start",
-    "test": "karma start --single-run",
-    "min": "webpack -p --config webpack.config.min.js",
     "max": "webpack",
+    "test": "karma start --single-run",
+    "test-watch": "karma start",
     "git": "git add -A && git commit -m 'squish me' & git push -f origin master",
-    "pub": "npm run test && npm run max && npm run min && npm run git && npm publish --access public",
-    "prepublish": "npm run test && npm run max"
+    "min": "webpack -p",
+    "pub": "npm run test && npm run min && sleep 1 && npm run git && npm publish --access public",
+    "prepublish": "npm run max"
   },
   "keywords": [
     "color",
@@ -19,7 +19,6 @@
   "author": "Dane Hansen <dane@danehansen.com> (http://www.danehansen.com/)",
   "license": "MIT",
   "devDependencies": {
-    "@danehansen/package-helpers": "^0.1.2",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-preset-es2015": "^6.24.1",
@@ -33,8 +32,8 @@
     "karma-sinon": "^1.0.5",
     "karma-webpack": "^2.0.3",
     "mocha": "^3.3.0",
-    "sinon": "^2.1.0",
-    "webpack": "^2.4.1"
+    "sinon": "^2.2.0",
+    "webpack": "^2.5.0"
   },
   "repository": {
     "type": "git",
