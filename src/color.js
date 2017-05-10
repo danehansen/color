@@ -1,3 +1,5 @@
+import { prepend } from '@danehansen/format'
+
 const WHITE = 255 + 255 + 255
 
 export function red(uint) {
@@ -32,10 +34,7 @@ export function rgbToUint(r, g, b) {
 
 export function uintToHex(uint) {
   let str = uint.toString(16)
-  while (str.length < 6) { // TODO: do this with math
-    str = '0' + str
-  }
-  return `#${str}`
+  return `#${prepend(str, 6)}`
 }
 
 export function uintToRGBString(uint) {
