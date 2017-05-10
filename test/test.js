@@ -83,6 +83,10 @@ describe('color', function() {
   })
 
   describe('stringToHex', function() {
+    it('returns null when theres no match', function() {
+      expect(color.stringToHex('')).to.be.null
+    })
+
     it('converts rgb(x,x,x) and rgba(x,x,x,x) to #XXXXXX', function() {
       for(let i = 0; i < REPEAT; i++) {
         const r = rand255()
@@ -147,7 +151,7 @@ describe('color', function() {
   })
 
   describe('uintToRGBAString', function() {
-    it('converts a uint to rgba(x,x,x,x) format', function() {
+    it('converts a uint with alpha to rgba(x,x,x,x) format', function() {
       for(let i = 0; i < REPEAT; i++) {
         const r = rand255()
         const g = rand255()
@@ -161,6 +165,21 @@ describe('color', function() {
         expect(parseInt(split[2])).to.equal(b)
         const newA = parseFloat(split[3] || 1)
         expect(Math.abs(newA - a)).to.be.below(0.004)
+      }
+    })
+
+    it('converts a uint with default alpha to rgba(x,x,x,x) format', function() {
+      for(let i = 0; i < REPEAT; i++) {
+        const r = rand255()
+        const g = rand255()
+        const b = rand255()
+        const uint = color.rgbToUint(r, g, b)
+        const str = color.uintToRGBAString(uint)
+        const split = getStringFromDOM(str).split('(')[1].split(',')
+        expect(parseInt(split[0])).to.equal(r)
+        expect(parseInt(split[1])).to.equal(g)
+        expect(parseInt(split[2])).to.equal(b)
+        expect(parseInt(split[3])).to.be.NaN
       }
     })
   })

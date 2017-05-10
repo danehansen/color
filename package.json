@@ -1,6 +1,6 @@
 {
   "name": "@danehansen/color",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "color",
   "main": "danehansen-color.min.js",
   "scripts": {
@@ -24,16 +24,18 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "chai": "^3.5.0",
-    "karma": "^1.6.0",
+    "istanbul-instrumenter-loader": "^2.0.0",
+    "karma": "^1.7.0",
     "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^2.0.0",
-    "karma-coverage": "^1.1.1",
+    "karma-chrome-launcher": "^2.1.1",
+    "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-mocha": "^1.3.0",
     "karma-sinon": "^1.0.5",
+    "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.3",
     "mocha": "^3.3.0",
     "sinon": "^2.2.0",
-    "webpack": "^2.5.0"
+    "webpack": "^2.5.1"
   },
   "repository": {
     "type": "git",

@@ -18,4 +18,14 @@ module.exports = {
     library: ['danehansen', 'color'],
     libraryTarget: 'umd',
   },
+  externals: [
+    {
+      '@danehansen/format': {
+        amd: '@danehansen/format',
+        commonjs: '@danehansen/format',
+        commonjs2: '@danehansen/format',
+        root: ['danehansen', 'format'],
+      },
+    },
+  ],
 }
