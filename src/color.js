@@ -14,6 +14,18 @@ export function blue(uint) {
   return uint & 0xFF
 }
 
+const HEX_REGEX = /^(#|0x)?([0-9a-g]{6}|[0-9a-g]{3})$/i
+export function hexToUint(hex) {
+  const exec = HEX_REGEX.exec(hex)
+  if (exec) {
+    hex = exec[2]
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
+    }
+    return parseInt(`0x${hex}`, 16)
+  }
+}
+
 export function rgbToBrightness(r, g, b) {
   return (r + g + b) / WHITE
 }
