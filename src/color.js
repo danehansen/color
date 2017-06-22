@@ -30,6 +30,44 @@ export function rgbToBrightness(r, g, b) {
   return (r + g + b) / WHITE
 }
 
+export function rgbToHSL(r, g, b) {
+  r /= 255
+  g /= 255
+  b /= 255
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const delta = max - min
+
+  let hue
+  let saturation
+  const lightness = (max + min) / 2
+
+  if (!delta) {
+    hue = 0
+    saturation = 0
+  } else {
+    switch(max) {
+      case r:
+      hue = (g - b) / delta + (g < b ? 6 : 0)
+      break
+      case g:
+      hue = (b - r) / delta + 2
+      break
+      case b:
+      hue = (r - g) / delta + 4
+      break
+    }
+    hue /= 6
+    saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min)
+  }
+
+  return {
+    hue,
+    saturation,
+    lightness,
+  }
+}
+
 const RGB_REGEX = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*\d*\.?\d*\s*\)/i
 export function stringToHex(rgb) {
   const exec = RGB_REGEX.exec(rgb)
@@ -54,4 +92,9 @@ export function uintToRGBString(uint) {
 
 export function uintToRGBAString(uint, alpha = 1) {
   return `rgba(${red(uint)},${green(uint)},${blue(uint)},${alpha})`
+}
+
+export function uintToHSLString(uint) {
+  const hsl = rgbToHSL(red(uint), green(uint), blue(uint))
+  return `hsl(${hsl.hue * 360},${hsl.saturation * 100}%,${hsl.lightness * 100}%)`
 }
