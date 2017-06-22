@@ -202,17 +202,6 @@ describe('color', function() {
   })
 
   describe('rgbToBrightness', function() {
-    it('totals seperate r, g, and b values', function() {
-      for(let i = 0; i < REPEAT; i++) {
-        const r = rand255()
-        const g = rand255()
-        const b = rand255()
-        const brightness = color.rgbToBrightness(r, g, b, false)
-
-        expect(r + g + b).to.equal(brightness)
-      }
-    })
-
     it('converts seperate r, g, and b values to a brightness ratio between 0 and 1', function() {
       for(let i = 0; i < REPEAT; i++) {
         const r = rand255()

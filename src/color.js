@@ -14,9 +14,8 @@ export function blue(uint) {
   return uint & 0xFF
 }
 
-export function rgbToBrightness(r, g, b, decimal = true) {
-  const total = r + g + b
-  return decimal ? (total / WHITE) : total
+export function rgbToBrightness(r, g, b) {
+  return (r + g + b) / WHITE
 }
 
 const RGB_REGEX = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*\d*\.?\d*\s*\)/i
