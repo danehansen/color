@@ -14,6 +14,13 @@ export function blue(uint) {
   return uint & 0xFF
 }
 
+export function distance(a, b) {
+  let result = (a.red - b.red) ** 2
+  result += (a.green - b.green) ** 2
+  result += (a.blue - b.blue) ** 2
+  return result
+}
+
 const HEX_REGEX = /^(#|0x)?([0-9a-g]{6}|[0-9a-g]{3})$/i
 export function hexToUint(hex) {
   const exec = HEX_REGEX.exec(hex)
