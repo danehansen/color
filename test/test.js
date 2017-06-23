@@ -213,4 +213,22 @@ describe('color', function() {
       }
     })
   })
+
+  describe('hexToUint', function() {
+    it('converts a hex string into a uint', function() {
+      for(let i = 0; i < REPEAT; i++) {
+        const red = rand255()
+        const green = rand255()
+        const blue = rand255()
+        const uint = color.rgbToUint(red, green, blue)
+        let hex = color.uintToHex(uint)
+        if (i % 3 === 1) {
+          hex = hex.replace('#', '')
+        } else if (i % 3 === 2) {
+          hex = hex.replace('#', '0x')
+        }
+        expect(color.hexToUint(hex)).to.equal(uint)
+      }
+    })
+  })
 })
