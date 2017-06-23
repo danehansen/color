@@ -231,4 +231,38 @@ describe('color', function() {
       }
     })
   })
+
+  // describe('rgbToHSL', function() {
+  //   it('converts rgb into hsl', function() {
+  //     for(let i = 0; i < REPEAT; i++) {
+  //       const red = rand255()
+  //       const green = rand255()
+  //       const blue = rand255()
+  //       const { hue, saturation, lightness } = color.rgbToHSL(red, green, blue)
+  //
+  //       if (i % 3 === 1) {
+  //         hex = hex.replace('#', '')
+  //       } else if (i % 3 === 2) {
+  //         hex = hex.replace('#', '0x')
+  //       }
+  //       expect(color.hexToUint(hex)).to.equal(uint)
+  //     }
+  //   })
+  // })
+
+  describe('uintToHSLString', function() {
+    it('converts rgb into hsl', function() {
+      for(let i = 0; i < REPEAT; i++) {
+        const red = rand255()
+        const green = rand255()
+        const blue = rand255()
+        const uint = color.rgbToUint(red, green, blue)
+        const str = color.uintToHSLString(uint)
+        const pixel = getPixelFromCanvas(str)
+        expect(pixel[0]).to.equal(red)
+        expect(pixel[1]).to.equal(green)
+        expect(pixel[2]).to.equal(blue)
+      }
+    })
+  })
 })

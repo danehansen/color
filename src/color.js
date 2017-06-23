@@ -103,5 +103,5 @@ export function uintToRGBAString(uint, alpha = 1) {
 
 export function uintToHSLString(uint) {
   const hsl = rgbToHSL(red(uint), green(uint), blue(uint))
-  return `hsl(${hsl.hue * 360},${hsl.saturation * 100}%,${hsl.lightness * 100}%)`
+  return `hsl(${Math.floor(hsl.hue * 360)},${Math.floor(hsl.saturation * 100)}%,${Math.floor(hsl.lightness * 100)}%)`
 }
