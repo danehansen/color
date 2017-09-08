@@ -14,29 +14,24 @@ export function blue(uint) {
   return uint & 0xFF
 }
 
-export function distance(a, b) {
-  let result = (a.red - b.red) ** 2
-  result += (a.green - b.green) ** 2
-  result += (a.blue - b.blue) ** 2
-  return result
-}
-
 const HEX_REGEX = /^(#|0x)?([0-9a-g]{6}|[0-9a-g]{3})$/i
 export function hexToUint(hex) {
   const exec = HEX_REGEX.exec(hex)
-  if (exec) {
-    hex = exec[2]
-    if (hex.length === 3) {
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
-    }
-    return parseInt(`0x${hex}`, 16)
+  if (!exec) {
+    return null
   }
+  hex = exec[2]
+  if (hex.length === 3) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2]
+  }
+  return parseInt(`0x${hex}`, 16)
 }
 
 export function rgbToBrightness(r, g, b) {
   return (r + g + b) / WHITE
 }
 
+// TODO not that accurate with how chrome calculates conversion
 export function rgbToHSL(r, g, b) {
   r /= 255
   g /= 255
@@ -55,7 +50,8 @@ export function rgbToHSL(r, g, b) {
   } else {
     switch(max) {
       case r:
-      hue = (g - b) / delta + (g < b ? 6 : 0)
+      hue = (g - b) / delta
+      // hue = (g - b) / delta + (g < b ? 6 : 0)
       break
       case g:
       hue = (b - r) / delta + 2
@@ -103,5 +99,5 @@ export function uintToRGBAString(uint, alpha = 1) {
 
 export function uintToHSLString(uint) {
   const hsl = rgbToHSL(red(uint), green(uint), blue(uint))
-  return `hsl(${Math.floor(hsl.hue * 360)},${Math.floor(hsl.saturation * 100)}%,${Math.floor(hsl.lightness * 100)}%)`
+  return `hsl(${Math.min(360, Math.floor(hsl.hue * 360))},${Math.min(100, Math.floor(hsl.saturation * 101))}%,${Math.min(100, Math.floor(hsl.lightness * 101))}%)`
 }
