@@ -1,7 +1,7 @@
 import * as color from '../src/color'
 import { prepend } from '@danehansen/format'
 
-const REPEAT = 10000
+const REPEAT = 100
 const CANVAS = makeCanvas()
 const CONTEXT = makeContext(CANVAS)
 const HOLDER = document.createElement('div')
@@ -103,7 +103,7 @@ describe('color', function() {
     })
   })
 
-  describe.skip('rgbToUint', function() { // TODO this is flakey
+  describe('rgbToUint', function() { // TODO this is flakey
     it('converts seperate r, g, and b uints and converts to a single uint', function() {
       for(let i = 0; i < REPEAT; i++) {
         const r = rand255()
@@ -266,10 +266,9 @@ describe('color', function() {
   })
 
   describe('uintToHSLString', function() {
-    it.only('converts rgb into hsl', function() {
+    it('converts rgb into hsl', function() {
       let biggest = 0
-      // for(let i = 0; i < REPEAT; i++) {
-      for(let i = 0; i < 100000; i++) {
+      for(let i = 0; i < REPEAT; i++) {
         const red = rand255()
         const green = rand255()
         const blue = rand255()
@@ -280,11 +279,7 @@ describe('color', function() {
         expect(Math.abs(pixel[0] - red)).to.be.below(precision)
         expect(Math.abs(pixel[1] - green)).to.be.below(precision)
         expect(Math.abs(pixel[2] - blue)).to.be.below(precision)
-
-        const diff = Math.max(Math.abs(pixel[0] - red), Math.abs(pixel[1] - green), Math.abs(pixel[2] - blue))
-        biggest = Math.max(diff, biggest)
       }
-      console.log(biggest)
     })
 
     it('converts rgb into hsl when colors are equal', function() {
@@ -317,4 +312,80 @@ describe('color', function() {
   //     }
   //   })
   // })
+
+  // describe('distance', function() {
+  //   it('calculates distance between two colors', function() {
+  //
+  //   })
+  // })
+
+  describe('sortColorsByHue', function() {
+    const MAX_INT = 255 ** 3
+    function randomColors(bottom = 0, top = MAX_INT) {
+      let colors = ['fff', '000', 'f00', 'ff0', '0f0', '0ff', '00f', 'f0f']
+      for (let i = 0; i < 500; i++) {
+        colors.push(color.uintToHex(Math.floor(Math.random() * (top - bottom)) + bottom))
+      }
+      return colors
+    }
+
+    function makeRGBs(strs) {
+      const results = []
+      for (const str of strs) {
+        const uint = color.hexToUint(str)
+        results.push({
+          red: color.red(uint),
+          green: color.green(uint),
+          blue: color.blue(uint),
+        })
+      }
+      return results
+    }
+
+    function distanceOfRGBs(rgbs) {
+      let distance = 0
+      for (let i = rgbs.length - 1; i > 0; i--) {
+        distance += color.distance(rgbs[i], rgbs[i - 1])
+      }
+      return distance
+    }
+
+    it('gives an approximate sorting of colors', function() {
+      const colors = makeRGBs(randomColors())
+      const distanceBefore = distanceOfRGBs(colors)
+      color.sortColorsByHue(colors)
+      const distanceAfter = distanceOfRGBs(colors)
+      expect(distanceAfter).is.below(distanceBefore * 0.1)
+    })
+
+    it('still sorts with seperate groups of close colors', function() {
+      const colors = makeRGBs(['f00', '0f0', 'f01', '0f1', 'f02', '0f2'])
+      const distanceBefore = distanceOfRGBs(colors)
+      color.sortColorsByHue(colors)
+      const distanceAfter = distanceOfRGBs(colors)
+      expect(distanceAfter).is.below(distanceBefore)
+      console.log(colors)
+      for(let c of colors) {
+        console.log(c)
+      }
+    })
+
+    it('has all same items as the unaltered list', function() {
+      const colors = makeRGBs(randomColors())
+      const copy = [...colors]
+      color.sortColorsByHue(colors)
+      for(const c of copy) {
+        expect(colors.indexOf(c)).is.above(-1)
+      }
+    })
+
+    it('puts any duplicates next to each other', function() {
+      const colors = makeRGBs(randomColors())
+      const randomColor = colors[Math.floor(Math.random() * colors.length - 1)]
+      const duplicate = {...randomColor}
+      colors.push(duplicate)
+      color.sortColorsByHue(colors)
+      expect(Math.abs(colors.indexOf(randomColor) - colors.indexOf(duplicate))).to.equal(1)
+    })
+  })
 })
