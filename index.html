@@ -41,18 +41,28 @@ var r = color.red('#ff0000');
 [static] Returns the green portion of a uint.</li>
 <li><strong>blue</strong>(color:uint):uint <br />
 [static] Returns the blue portion of a uint.</li>
+<li><strong>distance</strong>(a:Object, b:Object):Number <br />
+[static] Returns the "distance" between two color objects with <code>red</code>, <code>green</code>, and <code>blue</code> properties.</li>
+<li><strong>hexToUint</strong>(hex:String):uint <br />
+[static] Converts a hex in string format to a uint.</li>
 <li><strong>rgbToBrightness</strong>(r:uint, g:uint, b:uint, decimal:boolean = true):Number <br />
 [static] Returns the overall brightness of an RGB color as a single value, optionally as a decimal between 0 and 1 or as a uint between 0 and 765.</li>
-<li><strong>stringToHex</strong>(rgb:String):String <br />
-[static] Converts a 'rgb(X,X,X)' string into a '#XXXXXX' string.</li>
+<li><strong>rgbToHSL</strong>(r:uint, g:uint, b:uint):Object <br />
+[static] Converts 3 uints into an object with <code>hue</code>, <code>saturation</code>, and <code>lightness</code> properties.</li>
 <li><strong>rgbToUint</strong>(r:uint, g:uint, b:uint):uint <br />
 [static] Converts 3 uints into a single uint.</li>
+<li><strong>sortColorsByHue</strong>(rgbs:Array):Array <br />
+[static] Approximately sorts a list of objects with <code>red</code>, <code>green</code>, and <code>blue</code> properties by their hue.</li>
+<li><strong>stringToHex</strong>(rgb:String):String <br />
+[static] Converts a 'rgb(X,X,X)' string into a '#XXXXXX' string.</li>
 <li><strong>uintToHex</strong>(color:uint):String <br />
 [static] Converts a uint into a '#XXXXXX' string.</li>
 <li><strong>uintToRGBString</strong>(color:uint):String <br />
 [static] Converts a uint into a 'rgb(X,X,X)' string.</li>
 <li><strong>uintToRGBAString</strong>(color:uint, alpha:Number = 1):String <br />
 [static] Converts a uint and alpha into a 'rgba(X,X,X,X)' string.</li>
+<li><strong>uintToHSLString</strong>(color:uint):String <br />
+[static] Converts a uint into an object with <code>hue</code>, <code>saturation</code>, and <code>lightness</code> properties.</li>
 </ul>
   </body>
 </html>
