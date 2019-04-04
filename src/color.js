@@ -14,7 +14,7 @@ export function blue(uint) {
   return uint & 0xff;
 }
 
-const HEX_REGEX = /^(#|0x)?([0-9a-g]{6}|[0-9a-g]{3})$/i;
+const HEX_REGEX = /^(#|0x)?([0-9a-f]{6}|[0-9a-f]{3})$/i;
 export function hexToUint(hex) {
   const exec = HEX_REGEX.exec(hex);
   if (!exec) {
