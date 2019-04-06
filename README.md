@@ -1,9 +1,6 @@
-# color
+# color ![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@danehansen/color.svg) ![npm](https://img.shields.io/npm/dt/@danehansen/color.svg)
 
 The color library contains static methods to help manipulate colors.
-
-![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@danehansen/color.svg)
-![npm](https://img.shields.io/npm/dt/@danehansen/color.svg)
 
 ## Installation
 
