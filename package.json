@@ -1,6 +1,6 @@
 {
   "name": "@danehansen/color",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "color",
   "main": "danehansen-color.min.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "author": "Dane Hansen <dane@danehansen.com> (http://www.danehansen.com/)",
   "license": "MIT",
   "devDependencies": {
-    "@danehansen/package-helpers": "^0.2.0",
+    "@danehansen/package-helpers": "^0.2.1",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
@@ -44,6 +44,6 @@
     "url": "https://github.com/danehansen/color"
   },
   "dependencies": {
-    "@danehansen/format": "0.0.1"
+    "@danehansen/format": "0.0.3"
   }
 }
