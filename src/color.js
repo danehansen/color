@@ -2,114 +2,204 @@ import { prepend } from "@danehansen/format";
 
 const WHITE = 255 + 255 + 255;
 
-export function red(uint) {
+export function getUint(red, green, blue) {
+  return (red << 16) | (green << 8) | blue;
+}
+
+export function getRed(uint) {
   return (uint >> 16) & 0xff;
 }
 
-export function green(uint) {
+export function getGreen(uint) {
   return (uint >> 8) & 0xff;
 }
 
-export function blue(uint) {
+export function getBlue(uint) {
   return uint & 0xff;
 }
 
-const HEX_REGEX = /^(#|0x)?([0-9a-f]{6}|[0-9a-f]{3})$/i;
-export function hexToUint(hex) {
-  const exec = HEX_REGEX.exec(hex);
-  if (!exec) {
+export function getHSL(red, green, blue) {
+  const rgb = [red / 255, green / 255, blue / 255];
+  let min = rgb[0];
+  let max = rgb[0];
+  let maxIndex = 0;
+  for (let i = 1; i < rgb.length; i++) {
+    if (rgb[i] <= min) {
+      min = rgb[i];
+    }
+    if (rgb[i] >= max) {
+      max = rgb[i];
+      maxIndex = i;
+    }
+  }
+  let hue = 0;
+  if (maxIndex === 0) {
+    hue = (rgb[1] - rgb[2]) / (max - min);
+  } else if (maxIndex === 1) {
+    hue = 2 + (rgb[2] - rgb[0]) / (max - min);
+  } else if (maxIndex === 2) {
+    hue = 4 + (rgb[0] - rgb[1]) / (max - min);
+  }
+  hue *= 60;
+  if (hue < 0) {
+    hue = hue + 360;
+  }
+  const lightness = (min + max) / 2;
+  let saturation;
+  if (min === max) {
+    saturation = 0;
+  } else {
+    if (lightness < 0.5) {
+      saturation = (max - min) / (max + min);
+    } else {
+      saturation = (max - min) / (2 - max - min);
+    }
+  }
+  return {hue, saturation, lightness};
+}
+
+export function getRGB(hue, saturation, lightness) {
+  function hueToRgb(t1, t2, h) {
+    if (h < 0) {
+      h += 6;
+    }
+    if (h >= 6) {
+      h -= 6;
+    }
+    if (h < 1) {
+      return (t2 - t1) * h + t1;
+    } else if (h < 3) {
+      return t2;
+    } else if (h < 4) {
+      return (t2 - t1) * (4 - h) + t1;
+    } else {
+      return t1;
+    }
+  }
+
+  let total2;
+  hue /= 60;
+  if (lightness <= 0.5) {
+    total2 = lightness * (saturation + 1);
+  } else {
+    total2 = lightness + saturation - (lightness * saturation);
+  }
+  const total1 = lightness * 2 - total2;
+
+  return {
+    red : hueToRgb(total1, total2, hue + 2) * 255,
+    green: hueToRgb(total1, total2, hue) * 255,
+    blue : hueToRgb(total1, total2, hue - 2) * 255,
+  };
+}
+
+export function hexToUint(string) {
+  let hex = /^(#|0x)?([0-9a-f]{6}|[0-9a-f]{3})$/i.exec(string)?.[2];
+  if (!hex) {
     return null;
   }
-  hex = exec[2];
   if (hex.length === 3) {
     hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
   }
   return parseInt(`0x${hex}`, 16);
 }
 
-export function rgbToBrightness(r, g, b) {
-  return (r + g + b) / WHITE;
-}
-
-// TODO not that accurate with how chrome calculates conversion
-export function rgbToHSL(r, g, b) {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const delta = max - min;
-
-  let hue;
-  let saturation;
-  const lightness = (max + min) / 2;
-
-  if (!delta) {
-    hue = 0;
-    saturation = 0;
-  } else {
-    switch (max) {
-      case r:
-        hue = (g - b) / delta;
-        // hue = (g - b) / delta + (g < b ? 6 : 0)
-        break;
-      case g:
-        hue = (b - r) / delta + 2;
-        break;
-      case b:
-        hue = (r - g) / delta + 4;
-        break;
-    }
-    hue /= 6;
-    saturation =
-      lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
-  }
-
-  return {
-    hue,
-    saturation,
-    lightness
-  };
-}
-
-const RGB_REGEX = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*\d*\.?\d*\s*\)/i;
-export function stringToHex(rgb) {
-  const exec = RGB_REGEX.exec(rgb);
-  if (!exec) {
+export function rgbStringToRGB(string) {
+  const rgb = /rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,?\s*\d*\.?\d*\s*\)/i.exec(string);
+  if (!rgb) {
     return null;
   }
-  return uintToHex(rgbToUint(exec[1], exec[2], exec[3]));
+  return {red: parseFloat(rgb[1]), green: parseFloat(rgb[2]), blue: parseFloat(rgb[3])};
 }
 
-export function rgbToUint(r, g, b) {
-  return (r << 16) | (g << 8) | b;
+export function hslStringToHSL(string) {
+  const hsl = /hsla?\s*\(\s*(\d*\.?\d*)\s*,\s*(\d+)\s*%\s*,\s*(\d+)\s*%\s*,?\s*\d*\.?\d*\s*\)/i.exec(string);
+  if (!hsl) {
+    return null;
+  }
+  return {hue: parseFloat(hsl[1]), saturation: parseFloat(hsl[2]) / 100, lightness: parseFloat(hsl[3]) / 100};
 }
 
-export function uintToHex(uint) {
-  let str = uint.toString(16);
-  return `#${prepend(str, 6)}`;
+export function getBrightness(red, green, blue) {
+  return (red + green + blue) / WHITE;
 }
 
-export function uintToRGBString(uint) {
-  return `rgb(${red(uint)},${green(uint)},${blue(uint)})`;
+export function getRGBString(red, green, blue, alpha = 1) {
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
-export function uintToRGBAString(uint, alpha = 1) {
-  return `rgba(${red(uint)},${green(uint)},${blue(uint)},${alpha})`;
+export function getHSLString(hue, saturation, lightness, alpha = 1) {
+  return `hsla(${hue}, ${saturation * 100}%, ${lightness * 100}%, ${alpha})`;
 }
 
-export function uintToHSLString(uint) {
-  const hsl = rgbToHSL(red(uint), green(uint), blue(uint));
-  return `hsl(${Math.min(360, Math.floor(hsl.hue * 360))},${Math.min(
-    100,
-    Math.floor(hsl.saturation * 101)
-  )}%,${Math.min(100, Math.floor(hsl.lightness * 101))}%)`;
+export function getHex(uint) {
+  return `#${prepend(uint.toString(16), 6)}`;
 }
 
-export function distance(a, b) {
-  let result = (a.red - b.red) ** 2;
-  result += (a.green - b.green) ** 2;
-  result += (a.blue - b.blue) ** 2;
+export function getEverything({string, uint, red, green, blue, hue, saturation, lightness}) {
+  let hasUint = typeof uint === 'number';
+  let hasRGB = typeof red === 'number' && typeof green === 'number' && typeof blue === 'number';
+  let hasHSL = typeof hue === 'number' && typeof saturation === 'number' && typeof lightness === 'number';
+  let hasString = !!string;
+  if (hasString) {
+    const _uint = hexToUint(string);
+    if (typeof _uint === 'number') {
+      uint = _uint;
+      red = getRed(uint);
+      green = getGreen(uint);
+      blue = getBlue(uint);
+      ({hue, saturation, lightness} = getHSL(red, green, blue));
+    } else {
+      const _rgb = rgbStringToRGB(string);
+      if (_rgb) {
+        ({red, green, blue} = _rgb);
+        uint = getUint(red, green, blue);
+        ({hue, saturation, lightness} = getHSL(red, green, blue));
+      } else {
+        ({hue, saturation, lightness} = hslStringToHSL(string));
+        ({red, green, blue} = getRGB(hue, saturation, lightness));
+        uint = getUint(red, green, blue);
+      }
+    }
+  } else {
+    if (hasUint) {
+      red = getRed(uint);
+      green = getGreen(uint);
+      blue = getBlue(uint);
+      ({hue, saturation, lightness} = getHSL(red, green, blue));
+    } else if (hasRGB) {
+      uint = getUint(red, green, blue);
+      ({hue, saturation, lightness} = getHSL(red, green, blue));
+    } else {
+      ({red, green, blue} = getRGB(hue, saturation, lightness));
+      uint = getUint(red, green, blue);
+    }
+  }
+
+  const brightness = getBrightness(red, green, blue);
+  const rgb = getRGBString(red, green, blue);
+  const hsl = getHSLString(hue, saturation, lightness);
+  const hex = getHex(uint);
+
+  return {
+    red,
+    green,
+    blue,
+    hue,
+    saturation,
+    lightness,
+    brightness,
+    rgb,
+    hsl,
+    uint,
+    hex,
+  }
+}
+
+export function distance({red:rA, green:gA, blue: bA}, {red:rB, green:gB, blue: bB}) {
+  let result = (rA - rB) ** 2;
+  result += (gA - gB) ** 2;
+  result += (bA - bB) ** 2;
   return result;
 }
 
