@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   entry: {
     app: './src/color.js',
@@ -17,6 +19,7 @@ module.exports = {
     filename: 'danehansen-color.min.js',
     library: ['danehansen', 'color'],
     libraryTarget: 'umd',
+    path: __dirname,
   },
   externals: [
     {

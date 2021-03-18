@@ -1,5 +1,5 @@
 var webpack = require('webpack');
-var webpackConfig = require('./webpack.config.js');
+var webpackConfig = require('./webpack.common.js');
 webpackConfig.module.rules[0].use.unshift(
 {
   loader: 'istanbul-instrumenter-loader',
