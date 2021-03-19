@@ -21,9 +21,9 @@ function makeContext(canvas) {
 }
 
 function getPixelFromURL(color) {
-  return new Promise(function(resolve) {
+  return new Promise((resolve) => {
     const image = new Image();
-    image.addEventListener("load", function() {
+    image.addEventListener("load", () => {
       const canvas = makeCanvas();
       const context = makeContext(canvas);
       context.drawImage(image, 0, 0);
@@ -77,51 +77,35 @@ function makeString(r = rand255(), g = rand255(), b = rand255(), a) {
   return str;
 }
 
-describe("color", function() {
-  before(function() {
+describe("color", () => {
+  before(() => {
     document.body.appendChild(HOLDER);
   });
 
-  after(function() {
+  after(() => {
     document.body.removeChild(HOLDER);
   });
 
-  describe("danehansen-color.min.js", function() {
-    it("is minified", function() {
+  describe("danehansen-color.min.js", () => {
+    it("is minified", () => {
       expect(min.match(/\n/g)).to.be.null;
     });
   });
 
-  describe("stringToHex", function() {
-    it("returns null when theres no match", function() {
-      expect(color.stringToHex("")).to.be.null;
+  describe("getUint", () => {
+    it("converts red green and blue into a uint", () => {
+      expect(color.getUint(0,0,0)).to.equal(0);
+      expect(color.getUint(255,255,255)).to.equal(256 * 256 * 256 - 1);
     });
 
-    it("converts rgb(x,x,x) and rgba(x,x,x,x) to #XXXXXX", function() {
+    it("converts seperate r, g, and b uints and converts to a single uint", () => {
+      // TODO this WAS flakey
       for (let i = 0; i < REPEAT; i++) {
         const r = rand255();
         const g = rand255();
         const b = rand255();
-        const str = makeString(r, g, b);
-        const hex = color.stringToHex(str);
-        const data = getPixelFromCanvas(hex);
-        expect(data[0]).to.equal(r);
-        expect(data[1]).to.equal(g);
-        expect(data[2]).to.equal(b);
-      }
-    });
-  });
-
-  describe("rgbToUint", function() {
-    // TODO this is flakey
-    it("converts seperate r, g, and b uints and converts to a single uint", function() {
-      for (let i = 0; i < REPEAT; i++) {
-        const r = rand255();
-        const g = rand255();
-        const b = rand255();
-        const uint = color.rgbToUint(r, g, b);
+        const uint = color.getUint(r, g, b);
         const str = uint.toString(16);
-        // console.log(str)
         const strR = str.slice(0, str.length - 4) || 0;
         const strG = str.slice(str.length - 4, str.length - 2) || 0;
         const strB = str.slice(str.length - 2, str.length) || 0;
@@ -132,112 +116,28 @@ describe("color", function() {
     });
   });
 
-  describe("red, green, blue", function() {
-    it("they get the appropriate color value from a uint as a uint", function() {
+  describe("getRed, getGreen, getBlue", () => {
+    it("they get the appropriate color value from a uint as a uint", () => {
       for (let i = 0; i < REPEAT; i++) {
         const r = rand255();
         const g = rand255();
         const b = rand255();
-        const uint = color.rgbToUint(r, g, b);
-        expect(color.red(uint)).to.equal(r);
-        expect(color.green(uint)).to.equal(g);
-        expect(color.blue(uint)).to.equal(b);
+        const uint = color.getUint(r, g, b);
+        expect(color.getRed(uint)).to.equal(r);
+        expect(color.getGreen(uint)).to.equal(g);
+        expect(color.getBlue(uint)).to.equal(b);
       }
     });
   });
 
-  describe("uintToRGBString", function() {
-    it("converts a uint to rgb(x,x,x) format", function() {
-      for (let i = 0; i < REPEAT; i++) {
-        const r = rand255();
-        const g = rand255();
-        const b = rand255();
-        const uint = color.rgbToUint(r, g, b);
-        const str = color.uintToRGBString(uint);
-        const data = getPixelFromCanvas(str);
-        expect(data[0]).to.equal(r);
-        expect(data[1]).to.equal(g);
-        expect(data[2]).to.equal(b);
-      }
-    });
-  });
-
-  describe("uintToRGBAString", function() {
-    it("converts a uint with alpha to rgba(x,x,x,x) format", function() {
-      for (let i = 0; i < REPEAT; i++) {
-        const r = rand255();
-        const g = rand255();
-        const b = rand255();
-        const a = Math.random();
-        const uint = color.rgbToUint(r, g, b);
-        const str = color.uintToRGBAString(uint, a);
-        const split = getStringFromDOM(str)
-          .split("(")[1]
-          .split(",");
-        expect(parseInt(split[0])).to.equal(r);
-        expect(parseInt(split[1])).to.equal(g);
-        expect(parseInt(split[2])).to.equal(b);
-        const newA = parseFloat(split[3] || 1);
-        expect(Math.abs(newA - a)).to.be.below(0.004);
-      }
-    });
-
-    it("converts a uint with default alpha to rgba(x,x,x,x) format", function() {
-      for (let i = 0; i < REPEAT; i++) {
-        const r = rand255();
-        const g = rand255();
-        const b = rand255();
-        const uint = color.rgbToUint(r, g, b);
-        const str = color.uintToRGBAString(uint);
-        const split = getStringFromDOM(str)
-          .split("(")[1]
-          .split(",");
-        expect(parseInt(split[0])).to.equal(r);
-        expect(parseInt(split[1])).to.equal(g);
-        expect(parseInt(split[2])).to.equal(b);
-        expect(parseInt(split[3])).to.be.NaN;
-      }
-    });
-  });
-
-  describe("uintToHex", function() {
-    it("converts a uint to #XXXXXX format", function() {
-      for (let i = 0; i < REPEAT; i++) {
-        const r = rand255();
-        const g = rand255();
-        const b = rand255();
-        const uint = color.rgbToUint(r, g, b);
-        const str = color.uintToHex(uint);
-        const data = getPixelFromCanvas(str);
-
-        expect(Math.abs(data[0] - r)).to.be.below(2);
-        expect(Math.abs(data[1] - g)).to.be.below(2);
-        expect(Math.abs(data[2] - b)).to.be.below(2);
-      }
-    });
-  });
-
-  describe("rgbToBrightness", function() {
-    it("converts seperate r, g, and b values to a brightness ratio between 0 and 1", function() {
-      for (let i = 0; i < REPEAT; i++) {
-        const r = rand255();
-        const g = rand255();
-        const b = rand255();
-        const brightness = color.rgbToBrightness(r, g, b);
-
-        expect((r + g + b) / (255 * 3)).to.equal(brightness);
-      }
-    });
-  });
-
-  describe("hexToUint", function() {
-    it("converts a 6 character hex string into a uint", function() {
+  describe("hexToUint", () => {
+    it("converts a 6 character hex string into a uint", () => {
       for (let i = 0; i < REPEAT; i++) {
         const red = rand255();
         const green = rand255();
         const blue = rand255();
-        const uint = color.rgbToUint(red, green, blue);
-        let hex = color.uintToHex(uint);
+        const uint = color.getUint(red, green, blue);
+        let hex = color.getHex(uint);
         if (i % 3 === 1) {
           hex = hex.replace("#", "");
         } else if (i % 3 === 2) {
@@ -247,17 +147,17 @@ describe("color", function() {
       }
     });
 
-    it("returns null when no match", function() {
+    it("returns null when no match", () => {
       const red = rand255();
       const green = rand255();
       const blue = rand255();
-      const uint = color.rgbToUint(red, green, blue);
-      let hex = color.uintToHex(uint);
+      const uint = color.getUint(red, green, blue);
+      let hex = color.getHex(uint);
       hex = hex + "x";
       expect(color.hexToUint(hex)).to.be.null;
     });
 
-    it("converts a 3 character hex string into a uint", function() {
+    it("converts a 3 character hex string into a uint", () => {
       function multOf17() {
         return Math.floor(Math.random() * 16) * 17;
       }
@@ -266,8 +166,8 @@ describe("color", function() {
         const red = multOf17();
         const green = multOf17();
         const blue = multOf17();
-        const uint = color.rgbToUint(red, green, blue);
-        let hex = color.uintToHex(uint);
+        const uint = color.getUint(red, green, blue);
+        let hex = color.getHex(uint);
         hex = `${hex[1]}${hex[3]}${hex[5]}`;
         if (i % 3 === 1) {
           hex = `#${hex}`;
@@ -279,67 +179,144 @@ describe("color", function() {
     });
   });
 
-  describe("uintToHSLString", function() {
-    it("converts rgb into hsl", function() {
-      let biggest = 0;
-      for (let i = 0; i < REPEAT; i++) {
-        const red = rand255();
-        const green = rand255();
-        const blue = rand255();
-        const uint = color.rgbToUint(red, green, blue);
-        const str = color.uintToHSLString(uint);
-        const pixel = getPixelFromCanvas(str);
-        const precision = 8;
-        expect(Math.abs(pixel[0] - red)).to.be.below(precision);
-        expect(Math.abs(pixel[1] - green)).to.be.below(precision);
-        expect(Math.abs(pixel[2] - blue)).to.be.below(precision);
-      }
+  describe("rgbStringToRGB", () => {
+    it("returns null when theres no match", () => {
+      expect(color.rgbStringToRGB("")).to.be.null;
     });
 
-    it("converts rgb into hsl when colors are equal", function() {
-      for (let i = 0; i < 255; i++) {
-        const uint = color.rgbToUint(i, i, i);
-        const str = color.uintToHSLString(uint);
-        const pixel = getPixelFromCanvas(str);
-        const precision = 4;
-        expect(Math.abs(pixel[0] - i)).to.be.below(precision);
-        expect(Math.abs(pixel[1] - i)).to.be.below(precision);
-        expect(Math.abs(pixel[2] - i)).to.be.below(precision);
+    it("converts rgb(x,x,x) and rgba(x,x,x,x) to red green and blue uints", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const r = rand255();
+        const g = rand255();
+        const b = rand255();
+        let str = ['rgb','(',r,',',g,',',b,')'].join(randSpace());
+        let {red, green, blue} = color.rgbStringToRGB(str);
+        expect(red).to.equal(r);
+        expect(green).to.equal(g);
+        expect(blue).to.equal(b);
+
+        str = ['rgba','(',r,',',g,',',b,',',Math.random(),')'].join(randSpace());
+        ({red, green, blue} = color.rgbStringToRGB(str));
+        expect(red).to.equal(r);
+        expect(green).to.equal(g);
+        expect(blue).to.equal(b);
       }
     });
   });
 
-  // describe('rgbToHSL', function() {
-  //   it('converts rgb into hsl', function() {
-  //     for(let i = 0; i < REPEAT; i++) {
-  //       const red = rand255()
-  //       const green = rand255()
-  //       const blue = rand255()
-  //       const { hue, saturation, lightness } = color.rgbToHSL(red, green, blue)
-  //
-  //       if (i % 3 === 1) {
-  //         hex = hex.replace('#', '')
-  //       } else if (i % 3 === 2) {
-  //         hex = hex.replace('#', '0x')
-  //       }
-  //       expect(color.hexToUint(hex)).to.equal(uint)
-  //     }
-  //   })
-  // })
+  describe("hslStringToHSL", () => {
+    it("returns null when theres no match", () => {
+      expect(color.hslStringToHSL("")).to.be.null;
+    });
 
-  // describe('distance', function() {
-  //   it('calculates distance between two colors', function() {
-  //
-  //   })
-  // })
+    it("converts hsl(x,x,x) and hsla(x,x,x,x) to hue saturation and lightness uints", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const h = Math.random() * 360;
+        const s = Math.random();
+        const l = Math.random();
+        let str = ['hsl','(',h,',',Math.round(s * 100),'%',',',Math.round(l * 100),'%',')'].join(randSpace());
+        let {hue, saturation, lightness} = color.hslStringToHSL(str);
+        expect(Math.abs(h - hue)).to.be.below(2);
+        expect(Math.abs(s - saturation)).to.be.below(2);
+        expect(Math.abs(l - lightness)).to.be.below(2);
 
-  describe("sortColorsByHue", function() {
+        str = ['hsla','(',h,',',Math.round(s * 100),'%',',',Math.round(l * 100),'%',',',Math.random(),')'].join(randSpace());
+        ({hue, saturation, lightness} = color.hslStringToHSL(str));
+        expect(Math.abs(h - hue)).to.be.below(0.01);
+        expect(Math.abs(s - saturation)).to.be.below(0.01);
+        expect(Math.abs(l - lightness)).to.be.below(0.01);
+      }
+    });
+  });
+
+  describe("getBrightness", () => {
+    it("converts seperate r, g, and b values to a brightness ratio between 0 and 1", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const r = rand255();
+        const g = rand255();
+        const b = rand255();
+        const brightness = color.getBrightness(r, g, b);
+        expect((r + g + b) / (255 * 3)).to.equal(brightness);
+      }
+    });
+  });
+
+  describe("getHex", () => {
+    it("converts a uint to #XXXXXX format", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const r = rand255();
+        const g = rand255();
+        const b = rand255();
+        const uint = color.getUint(r, g, b);
+        const str = color.getHex(uint);
+        const data = getPixelFromCanvas(str);
+        expect(data[0]).to.equal(r);
+        expect(data[1]).to.equal(g);
+        expect(data[2]).to.equal(b);
+      }
+    });
+  });
+
+  describe("distance", () => {
+    it("calculates a distance between colors in arbitrary units", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const reddishA = {
+          red: Math.round(Math.random() * 50 + 200),
+          green: Math.round(Math.random() * 50),
+          blue: Math.round(Math.random() * 50),
+        };
+        const reddishB = {
+          red: Math.round(Math.random() * 50 + 200),
+          green: Math.round(Math.random() * 50),
+          blue: Math.round(Math.random() * 50),
+        };
+        const greenishA = {
+          red: Math.round(Math.random() * 50),
+          green: Math.round(Math.random() * 50 + 200),
+          blue: Math.round(Math.random() * 50),
+        };
+        const greenishB = {
+          red: Math.round(Math.random() * 50),
+          green: Math.round(Math.random() * 50 + 200),
+          blue: Math.round(Math.random() * 50),
+        };
+        const blueishA = {
+          red: Math.round(Math.random() * 50),
+          green: Math.round(Math.random() * 50),
+          blue: Math.round(Math.random() * 50 + 200),
+        };
+        const blueishB = {
+          red: Math.round(Math.random() * 50),
+          green: Math.round(Math.random() * 50),
+          blue: Math.round(Math.random() * 50 + 200),
+        };
+
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishA,greenishA));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishA,greenishB));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishA,blueishA));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishA,blueishB));
+
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishB,greenishA));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishB,greenishB));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishB,blueishA));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(reddishB,blueishB));
+
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(greenishA,blueishA));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(greenishA,blueishB));
+
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(greenishB,blueishA));
+        expect(color.distance(reddishA,reddishB)).to.be.below(color.distance(greenishB,blueishB));
+      }
+    });
+  });
+
+  describe("sortColorsByHue", () => {
     const MAX_INT = 255 ** 3;
     function randomColors(bottom = 0, top = MAX_INT) {
       let colors = ["fff", "000", "f00", "ff0", "0f0", "0ff", "00f", "f0f"];
       for (let i = 0; i < 500; i++) {
         colors.push(
-          color.uintToHex(Math.floor(Math.random() * (top - bottom)) + bottom)
+          color.getHex(Math.floor(Math.random() * (top - bottom)) + bottom)
         );
       }
       return colors;
@@ -350,9 +327,9 @@ describe("color", function() {
       for (const str of strs) {
         const uint = color.hexToUint(str);
         results.push({
-          red: color.red(uint),
-          green: color.green(uint),
-          blue: color.blue(uint)
+          red: color.getRed(uint),
+          green: color.getGreen(uint),
+          blue: color.getBlue(uint)
         });
       }
       return results;
@@ -366,7 +343,7 @@ describe("color", function() {
       return distance;
     }
 
-    it("gives an approximate sorting of colors", function() {
+    it("gives an approximate sorting of colors", () => {
       const colors = makeRGBs(randomColors());
       const distanceBefore = distanceOfRGBs(colors);
       color.sortColorsByHue(colors);
@@ -374,19 +351,15 @@ describe("color", function() {
       expect(distanceAfter).is.below(distanceBefore * 0.1);
     });
 
-    it("still sorts with seperate groups of close colors", function() {
+    it("still sorts with seperate groups of close colors", () => {
       const colors = makeRGBs(["f00", "0f0", "f01", "0f1", "f02", "0f2"]);
       const distanceBefore = distanceOfRGBs(colors);
       color.sortColorsByHue(colors);
       const distanceAfter = distanceOfRGBs(colors);
       expect(distanceAfter).is.below(distanceBefore);
-      console.log(colors);
-      for (let c of colors) {
-        console.log(c);
-      }
     });
 
-    it("has all same items as the unaltered list", function() {
+    it("has all same items as the unaltered list", () => {
       const colors = makeRGBs(randomColors());
       const copy = [...colors];
       color.sortColorsByHue(colors);
@@ -395,7 +368,7 @@ describe("color", function() {
       }
     });
 
-    it("puts any duplicates next to each other", function() {
+    it("puts any duplicates next to each other", () => {
       const colors = makeRGBs(randomColors());
       const randomColor = colors[Math.floor(Math.random() * colors.length - 1)];
       const duplicate = { ...randomColor };
@@ -406,4 +379,202 @@ describe("color", function() {
       ).to.equal(1);
     });
   });
+
+  describe('getHSL', () => {
+    it('converts red green and blue uints into hue saturation and lightness uints', () => {
+      for(let i = 0; i < REPEAT; i++) {
+        const red = rand255();
+        const green = rand255();
+        const blue = rand255();
+        const { hue, saturation, lightness } = color.getHSL(red, green, blue);
+        const hslString = color.getHSLString(hue, saturation, lightness);
+        const pixel = getPixelFromCanvas(hslString);
+        expect(pixel[0]).to.equal(red);
+        expect(pixel[1]).to.equal(green);
+        expect(pixel[2]).to.equal(blue);
+      }
+    })
+  })
+
+  describe("getRGBString", () => {
+    it("converts red green and blue uints to rgba(x,x,x,x) format", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const r = rand255();
+        const g = rand255();
+        const b = rand255();
+        const a = Math.random();
+        const str = color.getRGBString(r, g, b, a);
+        const split = getStringFromDOM(str)
+          .split("(")[1]
+          .split(",");
+        expect(parseInt(split[0])).to.equal(r);
+        expect(parseInt(split[1])).to.equal(g);
+        expect(parseInt(split[2])).to.equal(b);
+        const newA = parseFloat(split[3] || 1);
+        expect(Math.abs(newA - a)).to.be.below(0.004);
+      }
+    });
+
+    it("converts a uint with default alpha to rgba(x,x,x,x) format", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const r = rand255();
+        const g = rand255();
+        const b = rand255();
+        const str = color.getRGBString(r, g, b);
+        const split = getStringFromDOM(str)
+          .split("(")[1]
+          .split(",");
+        expect(parseInt(split[0])).to.equal(r);
+        expect(parseInt(split[1])).to.equal(g);
+        expect(parseInt(split[2])).to.equal(b);
+        expect(parseInt(split[3])).to.be.NaN;
+      }
+    });
+  });
+
+  describe("getHSLString", () => {
+    it("converts hue saturation and lightness uints to hsla(x,x,x,x) format", () => {
+      for (let i = 0; i < REPEAT; i++) {
+        const h = Math.random() * 360;
+        const s = Math.random() * 0.25 + 0.75;
+        const l = Math.random() * 0.5 + 0.25;
+        let a;
+        if (Math.random() > 0.5) {
+          a = Math.random();
+        }
+        const str = color.getHSLString(h, s, l, a);
+        const domStr = getStringFromDOM(str);
+        const {red, green, blue} = color.rgbStringToRGB(domStr);
+        const {hue, saturation, lightness} = color.getHSL(red, green, blue);
+        let minH = Math.min(hue, h);
+        const maxH = Math.max(hue, h);
+        if (maxH - minH > 180) {
+          minH += 360;
+        }
+        expect(Math.abs(minH - maxH)).to.be.below(1);
+        expect(Math.abs(saturation - s)).to.be.below(0.1);
+        expect(Math.abs(lightness - l)).to.be.below(0.1);
+      }
+    });
+  });
+
+  describe('getRGB', () => {
+    it('converts hue saturation and lightness numbers into red green and blue uints', () => {
+      for(let i = 0; i < REPEAT; i++) {
+        const h = Math.random() * 270 + 45;
+        const s = Math.random() * 0.5 + 0.5;
+        const l = Math.random() * 0.5 + 0.25;
+        const str = color.getHSLString(h, s, l);
+        const pixel = getPixelFromCanvas(str);
+        const { red, green, blue } = color.getRGB(h, s, l);
+        expect(Math.abs(pixel[0] - red)).to.be.below(1);
+        expect(Math.abs(pixel[1] - green)).to.be.below(1);
+        expect(Math.abs(pixel[2] - blue)).to.be.below(1);
+      }
+    })
+  })
+
+  describe('getEverything', () => {
+    it('gets data from #XXXXXX string', () => {
+      const everything = color.getEverything({string: '#f00'});
+      expect(everything).to.deep.equal({
+        red: 255,
+        green: 0,
+        blue: 0,
+        hue: 0,
+        saturation: 1,
+        lightness: 0.5,
+        brightness: 1 / 3,
+        rgb: 'rgba(255, 0, 0, 1)',
+        hsl: 'hsla(0, 100%, 50%, 1)',
+        uint: 0xff0000,
+        hex: '#ff0000',
+      })
+    })
+
+    it('gets data from rgb() string', () => {
+      const everything = color.getEverything({string: 'rgb(0,255,0)'});
+      expect(everything).to.deep.equal({
+        red: 0,
+        green: 255,
+        blue: 0,
+        hue: 120,
+        saturation: 1,
+        lightness: 0.5,
+        brightness: 1 / 3,
+        rgb: 'rgba(0, 255, 0, 1)',
+        hsl: 'hsla(120, 100%, 50%, 1)',
+        uint: 0x00ff00,
+        hex: '#00ff00',
+      })
+    })
+
+    it('gets data from hsl() string', () => {
+      const everything = color.getEverything({string: 'hsl(240,100%,50%)'});
+      expect(everything).to.deep.equal({
+        red: 0,
+        green: 0,
+        blue: 255,
+        hue: 240,
+        saturation: 1,
+        lightness: 0.5,
+        brightness: 1 / 3,
+        rgb: 'rgba(0, 0, 255, 1)',
+        hsl: 'hsla(240, 100%, 50%, 1)',
+        uint: 0x0000ff,
+        hex: '#0000ff',
+      })
+    })
+
+    it('gets data from uint', () => {
+      const everything = color.getEverything({uint: 0xff0000});
+      expect(everything).to.deep.equal({
+        red: 255,
+        green: 0,
+        blue: 0,
+        hue: 0,
+        saturation: 1,
+        lightness: 0.5,
+        brightness: 1 / 3,
+        rgb: 'rgba(255, 0, 0, 1)',
+        hsl: 'hsla(0, 100%, 50%, 1)',
+        uint: 0xff0000,
+        hex: '#ff0000',
+      })
+    })
+
+    it('gets data from rgb uints', () => {
+      const everything = color.getEverything({red: 0, green: 255, blue: 0});
+      expect(everything).to.deep.equal({
+        red: 0,
+        green: 255,
+        blue: 0,
+        hue: 120,
+        saturation: 1,
+        lightness: 0.5,
+        brightness: 1 / 3,
+        rgb: 'rgba(0, 255, 0, 1)',
+        hsl: 'hsla(120, 100%, 50%, 1)',
+        uint: 0x00ff00,
+        hex: '#00ff00',
+      })
+    })
+
+    it('gets data from hue saturation lightness numbers', () => {
+      const everything = color.getEverything({hue: 240, saturation: 1, lightness: 0.5});
+      expect(everything).to.deep.equal({
+        red: 0,
+        green: 0,
+        blue: 255,
+        hue: 240,
+        saturation: 1,
+        lightness: 0.5,
+        brightness: 1 / 3,
+        rgb: 'rgba(0, 0, 255, 1)',
+        hsl: 'hsla(240, 100%, 50%, 1)',
+        uint: 0x0000ff,
+        hex: '#0000ff',
+      })
+    })
+  })
 });
