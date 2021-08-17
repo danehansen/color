@@ -39,45 +39,49 @@ footer {
 <p>As a module:</p>
 <pre><code>import * as color from '@danehansen/color';
 
-var r = color.red('#ff0000');
+var r = color.getRed(0xff0000);
 </code></pre>
 <p>In your browser:</p>
 <pre><code>&lt;script src='danehansen-color.min.js'&gt;&lt;/script&gt;
 &lt;script&gt;
   var color = window.danehansen.color;
-  var r = color.red('#ff0000');
+  var r = color.getRed(0xff0000);
 &lt;/script&gt;
 </code></pre>
-<h2>Public Methods</h2>
+<h2>Methods</h2>
 <ul>
-<li><strong>red</strong>(color:uint):uint<br />
-[static] Returns the red portion of a uint.</li>
-<li><strong>green</strong>(color:uint):uint<br />
-[static] Returns the green portion of a uint.</li>
-<li><strong>blue</strong>(color:uint):uint<br />
-[static] Returns the blue portion of a uint.</li>
-<li><strong>distance</strong>(a:Object, b:Object):Number<br />
-[static] Returns the "distance" between two color objects with <code>red</code>, <code>green</code>, and <code>blue</code> properties.</li>
-<li><strong>hexToUint</strong>(hex:String):uint<br />
-[static] Converts a hex in string format to a uint.</li>
-<li><strong>rgbToBrightness</strong>(r:uint, g:uint, b:uint, decimal:boolean = true):Number<br />
-[static] Returns the overall brightness of an RGB color as a single value, optionally as a decimal between 0 and 1 or as a uint between 0 and 765.</li>
-<li><strong>rgbToHSL</strong>(r:uint, g:uint, b:uint):Object<br />
-[static] Converts 3 uints into an object with <code>hue</code>, <code>saturation</code>, and <code>lightness</code> properties.</li>
-<li><strong>rgbToUint</strong>(r:uint, g:uint, b:uint):uint<br />
-[static] Converts 3 uints into a single uint.</li>
+<li><strong>getRed</strong>(color:uint):uint<br />
+Returns the red portion of a uint.</li>
+<li><strong>getGreen</strong>(color:uint):uint<br />
+Returns the green portion of a uint.</li>
+<li><strong>getBlue</strong>(color:uint):uint<br />
+Returns the blue portion of a uint.</li>
+<li><strong>getUint</strong>(r:uint, g:uint, b:uint):uint<br />
+Converts 3 uints into a single uint.</li>
+<li><strong>distance</strong>({red:uint, green:uint, blue:uint}, {red:uint, green:uint, blue:uint}):Number<br />
+Returns the "distance" between two color objects with <code>red</code>, <code>green</code>, and <code>blue</code> properties. The distance is an arbitrary value.</li>
 <li><strong>sortColorsByHue</strong>(rgbs:Array):Array<br />
-[static] Approximately sorts a list of objects with <code>red</code>, <code>green</code>, and <code>blue</code> properties by their hue.</li>
-<li><strong>stringToHex</strong>(rgb:String):String<br />
-[static] Converts a 'rgb(X,X,X)' string into a '#XXXXXX' string.</li>
-<li><strong>uintToHex</strong>(color:uint):String<br />
-[static] Converts a uint into a '#XXXXXX' string.</li>
-<li><strong>uintToRGBString</strong>(color:uint):String<br />
-[static] Converts a uint into a 'rgb(X,X,X)' string.</li>
-<li><strong>uintToRGBAString</strong>(color:uint, alpha:Number = 1):String<br />
-[static] Converts a uint and alpha into a 'rgba(X,X,X,X)' string.</li>
-<li><strong>uintToHSLString</strong>(color:uint):String<br />
-[static] Converts a uint into an object with <code>hue</code>, <code>saturation</code>, and <code>lightness</code> properties.</li>
+Approximately sorts a list of objects with <code>red</code>, <code>green</code>, and <code>blue</code> properties by their hue.</li>
+<li><strong>getHSL</strong>(r:uint, g:uint, b:uint):Object<br />
+Converts 3 uints into an object with <code>hue</code>, <code>saturation</code>, and <code>lightness</code> properties.</li>
+<li><strong>getRGB</strong>(h:uint, s:Number, b:Number):Object<br />
+Converts 3 numbers into an object with <code>red</code>, <code>green</code>, and <code>blue</code> properties.</li>
+<li><strong>hexToUint</strong>(hex:String):uint<br />
+Converts a hex in string format to a uint.</li>
+<li><strong>getBrightness</strong>(r:uint, g:uint, b:uint):Number<br />
+Returns the overall brightness of an RGB color as a single decimal between 0 and 1.</li>
+<li><strong>getRGBString</strong>(r:uint, g:uint, b:uint, alpha:Number = 1):String<br />
+Converts 3 uints into a 'rgba(X,X,X,X)' string.</li>
+<li><strong>getHSLString</strong>(h:uint, s:Number, l:Number, alpha:Number = 1):String<br />
+Converts 3 numbers into a 'hsla(X,X,X,X)' string.</li>
+<li><strong>rgbStringToRGB</strong>(str:String):Object<br />
+Converts a 'rgb' style string into an object with <code>red</code>, <code>green</code>, and <code>blue</code> properties.</li>
+<li><strong>hslStringToHSL</strong>(str:String):Object<br />
+Converts a 'hsl' style string into an object with <code>hue</code>, <code>saturation</code>, and <code>lightness</code> properties.</li>
+<li><strong>getHex</strong>(color:uint):String<br />
+Converts a uint into a '#XXXXXX' string.</li>
+<li><strong>getHex</strong>({string:String, uint:uint, red:uint, green:uint, blue: uint, hue: uint, saturation: Number, lightness: Number}):Object<br />
+Converts whatever you got into an object with <code>red</code>, <code>green</code>, <code>blue</code>, <code>hue</code>, <code>saturation</code>, <code>lightness</code>, <code>brightness</code>, <code>rgb</code>, <code>hsl</code>, <code>uint</code>, and <code>hex</code> properties.</li>
 </ul>
     <script></script>
   </body>

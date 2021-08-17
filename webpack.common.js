@@ -17,6 +17,7 @@ module.exports = {
   },
   output: {
     filename: 'danehansen-color.min.js',
+    globalObject: 'this',
     library: ['danehansen', 'color'],
     libraryTarget: 'umd',
     path: __dirname,
