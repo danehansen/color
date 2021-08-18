@@ -1,6 +1,6 @@
 {
   "name": "@danehansen/color",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "color",
   "main": "danehansen-color.min.js",
   "scripts": {
@@ -62,6 +62,6 @@
     "url": "https://github.com/danehansen/color"
   },
   "dependencies": {
-    "@danehansen/format": "0.1.1"
+    "@danehansen/format": "1.0.1"
   }
 }
